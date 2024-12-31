@@ -1,0 +1,33 @@
+name: Auto Commit README
+
+on:
+  schedule:
+    # Menjadwalkan workflow setiap hari pada pukul 00:00 UTC
+    - cron: "0 0 * * *"
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Mengecek repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Mengubah file README.md
+      - name: Update README
+        run: |
+          echo "Auto-update: $(date)" >> README.md
+
+      # Menambahkan perubahan ke Git dan membuat commit
+      - name: Commit changes
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Auto-update README on $(date)" || echo "No changes to commit"
+
+      # Push perubahan ke repository
+      - name: Push changes
+        run: |
+          git push
